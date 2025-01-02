@@ -9,7 +9,7 @@ cuda练习，抄袭自《Programming Massively Parallel Processors Fourth Editio
 
   知识点：多维网格组织、矩阵乘法、平铺瓦片化（共享内存 分块矩阵）、动态大小共享内存
 
-  - [ ] 基础实现
+  - [x] 基础实现
   - [ ] 
 
 - 卷积（[第七章：卷积 常量内存和缓存简介](https://fancyerii.github.io/pmpp/ch7)）
