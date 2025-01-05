@@ -4,14 +4,15 @@
 
 __global__ void MatrixMulKernel(float *M, float *N, float *P, int width)
 {
+    // 每个线程负责一个输出元素
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int col = blockIdx.x * blockDim.x + threadIdx.x;
-    if ((row < width) && (col < width)) // row col = 0,1
+    if ((row < width) && (col < width)) // row col < width
     {
         float Pvalue = 0;
-        for (int k = 0; k < width; ++k) // k<=2
+        for (int k = 0; k < width; ++k) // k < width
         {
-            Pvalue += M[row * width + k] * N[k * width + col];
+            Pvalue += M[row * width + k] * N[k * width + col]; // 一整行和一整列
         }
         P[row * width + col] = Pvalue;
     }
@@ -19,12 +20,12 @@ __global__ void MatrixMulKernel(float *M, float *N, float *P, int width)
 
 int main()
 {
-    const int width = 2;
+    const int width = 32;
     float *M_d, *N_d, *P_d;
 
     size_t size = width * width * sizeof(float);
 
-    std::vector<float> h_Matrix_one={4.0f,4.0f,2.0f,2.0f};
+    std::vector<float> h_Matrix_one(width * width, 4.0f);
     std::vector<float> h_Matrix_two(width * width, 2.0f);
     std::vector<float> h_Res(width * width, 0.0f);
 
@@ -35,18 +36,21 @@ int main()
     cudaMemcpy(M_d, h_Matrix_one.data(), size, cudaMemcpyHostToDevice);
     cudaMemcpy(N_d, h_Matrix_two.data(), size, cudaMemcpyHostToDevice);
 
-    dim3 dimGrid(1, 1, 1);
-    dim3 dimBlock(2, 2, 1);
-    // 这样写不行 MatrixMulKernel<<<1,2,2>>>(M_d,N_d,P_d,width);
-    MatrixMulKernel<<<dimGrid, dimBlock>>>(M_d, N_d, P_d, width); // 这样可以，为什么
+    dim3 dimBlock(16,16,1);//每个块256个线程
+    dim3 dimGrid(width,width,1);//创建一个width*width个块的网格
+
+    MatrixMulKernel<<<dimGrid, dimBlock>>>(M_d, N_d, P_d, width);
 
     cudaMemcpy(h_Res.data(), P_d, size, cudaMemcpyDeviceToHost);
 
     cudaFree(M_d);
     cudaFree(N_d);
     cudaFree(P_d);
-    for (float elem : h_Res)
-    {
-        printf("%f\n", elem);
-    }
+    // std::cout << "Matrix C (A * B):" << std::endl;
+    // for (int i = 0; i < width; ++i) {
+    //     for (int j = 0; j < width; ++j) {
+    //         std::cout << h_Res[i * width + j] << "\t";
+    //     }
+    //     std::cout << std::endl;
+    // }
 }

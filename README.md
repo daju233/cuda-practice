@@ -7,10 +7,10 @@ cuda练习，抄袭自《Programming Massively Parallel Processors Fourth Editio
 
 - 矩阵乘法（[第三章：多维网格和数据](https://fancyerii.github.io/pmpp/ch3)，[第四章：计算架构和调度](https://fancyerii.github.io/pmpp/ch4)，[第五章：内存架构和数据局部性](https://fancyerii.github.io/pmpp/ch5)，[第六章：性能考虑](https://fancyerii.github.io/pmpp/ch6)）
 
-  知识点：多维网格组织、矩阵乘法、平铺瓦片化（共享内存 分块矩阵）、动态大小共享内存
+  知识点：多维网格组织、矩阵乘法、分块平铺（共享内存 分块矩阵）、动态大小共享内存
 
   - [x] 基础实现
-  - [ ] 
+  - [x] shared memory 分块平铺（只限于32*32以内矩阵）
 
 - 卷积（[第七章：卷积 常量内存和缓存简介](https://fancyerii.github.io/pmpp/ch7)）
 
